@@ -1,11 +1,14 @@
 <?php
 
-namespace Samwilson\WikimediaReadability;
+namespace Samwilson\WikipediaReadability;
 
 use Mediawiki\Api\MediawikiApi;
 use Mediawiki\Api\FluentRequest;
 use DaveChild\TextStatistics\TextStatistics;
 
+/**
+ * 
+ */
 class Tool {
 
     /** @var MediawikiApi */
@@ -16,31 +19,45 @@ class Tool {
         $this->api = MediawikiApi::newFromApiEndpoint($apiUrl);
     }
 
+    /**
+     * Get an array of information about the pages in the given category.
+     *
+     * @param string $cat The category to search.
+     * @return string[] The search results.
+     */
     public function search($cat) {
         // Don't bother if no category provided.
         if (empty($cat)) {
             return [];
         }
-        $catMembers = [];
+        $pages = [];
         foreach ($this->categoryMembers($cat) as $page) {
-            $catMembers[$page['pageid']] = $page;
+            unset($page['ns']);
+            $pages[$page['pageid']] = $page;
         }
-        if (empty($catMembers)) {
+        if (empty($pages)) {
             return [];
         }
-        $pagesInfo = [];
         $textStatistics = new TextStatistics;
-        foreach ($this->firstParagraphs($catMembers) as $page) {
-            $score = $textStatistics->fleschKincaidReadingEase($page['extract']);
-            $page['score'] = $score;
-            // Construct a key to sort by.
-            $key = str_pad($score * 100, 5, 0, STR_PAD_LEFT) . $page['title'];
-            $pagesInfo[$key] = $page;
+        $textStatistics->normalise = false;
+        foreach ($this->firstParagraphs(array_keys($pages)) as $pageId => $extract) {
+            $score = $textStatistics->fleschKincaidReadingEase($extract);
+            $pages[$pageId]['score'] = $score;
+            $pages[$pageId]['extract'] = $extract;
         }
-        ksort($pagesInfo);
-        return $pagesInfo;
+        // Sort by score.
+        usort($pages, function($a, $b) {
+            return $a['score'] - $b['score'];
+        });
+        return $pages;
     }
 
+    /**
+     * Get the first 50 pages in the given category.
+     *
+     * @param string $cat The category to query.
+     * @return string[] Information about the pages in the category (ID and title).
+     */
     public function categoryMembers($cat) {
         $limit = 50;
         $request = FluentRequest::factory()
@@ -53,33 +70,41 @@ class Tool {
         return $cmembers['query']['categorymembers'];
     }
 
-    public function firstParagraphs($pages) {
+    /**
+     * Get the first paragraphs, as plain text, of a given set of pages.
+     *
+     * @param integer[] $pageIds The IDs of the pages to get paragraphs of.
+     * @return string[] An array, keyed by page IDs and containing the first paragraphs.
+     */
+    public function firstParagraphs($pageIds) {
+        // Query the extracts, in chunks of 20 (an API limit).
         $exLimit = 20;
-        // Split the page IDs into groups of 20.
-        $chunks = array_chunk($pages, $exLimit, true);
+        $pageIdsChunks = array_chunk($pageIds, $exLimit, true);
         $extracts = [];
-        foreach ($chunks as $chunk) {
+        foreach ($pageIdsChunks as $pageIdsChunk) {
             $request = FluentRequest::factory()
                     ->setAction('query')
                     ->setParam('prop', 'extracts')
                     ->setParam('explaintext', true)
                     ->setParam('exintro', true)
                     ->setParam('exlimit', $exLimit)
-                    ->setParam('pageids', join('|', array_keys($chunk)))
+                    ->setParam('pageids', join('|', $pageIdsChunk))
             ;
             $response = $this->api->getRequest($request);
             $extracts = array_merge($extracts, $response['query']['pages']);
         }
 
+        // Assemble the extracts.
+        $out = [];
         foreach ($extracts as $extract) {
             $ex = $extract['extract'];
-            // Trim to only the first paragraph (unless there's only one).
+            // Trim to only the first paragraph (unless there's only one paragraph).
             if (strpos($ex, "\n") !== false) {
                 $ex = substr($ex, 0, strpos($ex, "\n"));
             }
-            $pages[$extract['pageid']]['extract'] = $ex;
+            $out[$extract['pageid']] = $ex;
         }
-        return $pages;
+        return $out;
     }
 
 }

@@ -11,7 +11,7 @@
             <div class="page-header">
                 <h1>{{title}}</h1>
                 <p>
-                    This tool displays up to the top 50 pages in a given category on English Wikipedia,
+                    This tool displays up to fifty pages in a given category on English Wikipedia,
                     ranked by their <a href="https://en.wikipedia.org/wiki/Flesch%E2%80%93Kincaid_readability_tests">Flesch reading ease</a> scores.
                 </p>
             </div>
@@ -28,11 +28,15 @@
 
             {% if cat and not pages %}
             <div class="alert alert-warning">
-                No pages found in category "{{cat}}".
+                No pages found in category "{{cat}}"
             </div>
             {% endif %}
 
             {% if pages %}
+                <div class="alert alert-info">
+                    {{pages|length|number_format}} pages retrieved from
+                    <a href="https://en.wikipedia.org/wiki/Category:{{cat}}" class="alert-link">Category:{{cat}}</a>
+                </div>
                 <table class="table table-condensed">
                     <caption>Key to the Flesch reading ease scores:</caption>
                     <thead>
@@ -86,7 +90,7 @@
                         <li style="border-color:rgb(100,{{(255 * (page.score/100))|round}},100); border-style:solid; border-width:0 0 0 1em; padding-left:0.3em">
                             <strong>{{page.score|number_format(1)}}</strong>
                             <a href="https://en.wikipedia.org/wiki/{{page.title}}">{{page.title}}</a>
-                            {#{{page.extract}}#}
+                            {{page.extract}}
                         </li>
                     {% endfor %}
                 </ol>

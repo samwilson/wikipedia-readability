@@ -1,6 +1,6 @@
 <?php
 
-namespace Samwilson\WikimediaReadability;
+namespace Samwilson\WikipediaReadability;
 
 use Symfony\Component\HttpFoundation\Request;
 use Silex\Application;
