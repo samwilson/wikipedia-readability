@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<ruleset>
+    <description>Sniffs for the coding standards of this project.</description>
+
+    <!--
+      About this file:
+      https://github.com/squizlabs/PHP_CodeSniffer/wiki/Annotated-ruleset.xml
+    -->
+
+    <file>./</file>
+    <exclude-pattern>./vendor/*</exclude-pattern>
+
+    <rule ref="PSR2" />
+
+    <!-- Some coding standards above and beyond PSR2. -->
+    <rule ref="Squiz.PHP.CommentedOutCode" />
+    <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace" />
+    <rule ref="Squiz.Strings.ConcatenationSpacing" />
+    <rule ref="Generic.ControlStructures.InlineControlStructure" />
+
+</ruleset>

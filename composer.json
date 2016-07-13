@@ -19,6 +19,7 @@
         "silex/silex": "2.*",
         "addwiki/mediawiki-api-base": "2.*",
         "davechild/textstatistics": "1.*",
-        "twig/twig": "1.*"
+        "twig/twig": "1.*",
+        "symfony/twig-bridge": "3.*"
     }
 }

@@ -7,14 +7,17 @@ use Mediawiki\Api\FluentRequest;
 use DaveChild\TextStatistics\TextStatistics;
 
 /**
- * 
+ * This Tool class is where all the actual work happens: retrieving the data
+ * from Wikipedia and calculating the readability scores.
  */
-class Tool {
+class Tool
+{
 
     /** @var MediawikiApi */
     protected $api;
 
-    public function __construct() {
+    public function __construct()
+    {
         $apiUrl = 'https://en.wikipedia.org/w/api.php';
         $this->api = MediawikiApi::newFromApiEndpoint($apiUrl);
     }
@@ -25,7 +28,8 @@ class Tool {
      * @param string $cat The category to search.
      * @return string[] The search results.
      */
-    public function search($cat) {
+    public function search($cat)
+    {
         // Don't bother if no category provided.
         if (empty($cat)) {
             return [];
@@ -46,7 +50,7 @@ class Tool {
             $pages[$pageId]['extract'] = $extract;
         }
         // Sort by score.
-        usort($pages, function($a, $b) {
+        usort($pages, function ($a, $b) {
             return $a['score'] - $b['score'];
         });
         return $pages;
@@ -58,7 +62,8 @@ class Tool {
      * @param string $cat The category to query.
      * @return string[] Information about the pages in the category (ID and title).
      */
-    public function categoryMembers($cat) {
+    public function categoryMembers($cat)
+    {
         $limit = 50;
         $request = FluentRequest::factory()
                 ->setAction('query')
@@ -76,7 +81,8 @@ class Tool {
      * @param integer[] $pageIds The IDs of the pages to get paragraphs of.
      * @return string[] An array, keyed by page IDs and containing the first paragraphs.
      */
-    public function firstParagraphs($pageIds) {
+    public function firstParagraphs($pageIds)
+    {
         // Query the extracts, in chunks of 20 (an API limit).
         $exLimit = 20;
         $pageIdsChunks = array_chunk($pageIds, $exLimit, true);
@@ -106,5 +112,4 @@ class Tool {
         }
         return $out;
     }
-
 }
