@@ -10,14 +10,14 @@
     <body>
         <div class="container">
             <div class="page-header">
-                <h1><a href="{{relative_path('/')}}">{{title}}</a></h1>
+                <h1><a href="{{path('home')}}">{{title}}</a></h1>
             </div>
             <p>
                 This tool displays up to fifty articles in a given category on English Wikipedia,
                 ranked by their <a href="https://en.wikipedia.org/wiki/Flesch%E2%80%93Kincaid_readability_tests">Flesch reading ease</a> scores.
             </p>
 
-            <form action="{{relative_path('/')}}" method="get" class="well">
+            <form action="{{path('home')}}" method="get" class="well">
                 <div class="form-group">
                     <label for="cat" class="form-label">Category name:</label>
                     <input type="text" name="cat" class="form-control" {% if cat %}value="{{cat}}"{% endif %} />
@@ -36,18 +36,16 @@
             {% endif %}
 
             {% if pages %}
-                <ul class="list-inline">
-                    <li>
-                        {{pages|length|number_format}} pages retrieved from
-                        <a href="https://en.wikipedia.org/wiki/Category:{{cat}}" class="alert-link">Category:{{cat}}</a>
-                    </li>
-                    <li>
-                        <a role="button" data-toggle="collapse" href="#scoreKey" aria-expanded="false" aria-controls="scoreKey">
-                            <strong>Display key to the readabilty scores</strong>
-                        </a>
-                    </li>
-                </ul>
-                <div class="collapse" id="scoreKey">
+                <p>
+                    {{pages|length|number_format}} articles retrieved from
+                    <a href="https://en.wikipedia.org/wiki/Category:{{cat}}" class="alert-link">Category:{{cat}}</a>
+                </p>
+                <p>
+                    <a role="button" data-toggle="collapse" href="#scoreKey" aria-expanded="false" aria-controls="scoreKey">
+                        <strong>Display key to the readabilty scores</strong>
+                    </a>
+                </p>
+                <div class="collapse well" id="scoreKey">
                 <table class="table table-condensed">
                     <thead>
                         <tr>
@@ -94,6 +92,7 @@
                         </tr>
                     </tbody>
                 </table>
+                <p>Note that Flesch reading ease scores can also be below 0.0 and above 100.0.</p>
                 </div>
 
                 <table class="table">
@@ -117,14 +116,17 @@
                     </tbody>
                 </table>
             {% endif %}
-            <p class="text-muted">Please report any bugs or feature requests via <a href="https://github.com/samwilson/wikipedia-readability/issues">GitHub</a>.</p>
+            <p class="text-muted text-right">
+                Please report any bugs or feature requests via
+                <a href="https://github.com/samwilson/wikipedia-readability/issues">GitHub</a>
+            </p>
         </div>
         <script type="text/javascript">
-            var searchUrl = "{{relative_path('search')}}";
+            var searchUrl = "{{path('search')}}";
         </script>
         <script type="text/javascript" src="//tools-static.wmflabs.org/cdnjs/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
         <script type="text/javascript" src="//tools-static.wmflabs.org/cdnjs/ajax/libs/twitter-bootstrap/3.3.6/js/bootstrap.min.js"></script>
         <script type="text/javascript" src="//tools-static.wmflabs.org/cdnjs/ajax/libs/jquery-autocomplete/1.0.7/jquery.auto-complete.min.js"></script>
-        <script type="text/javascript" src="{{relative_path('/scripts.js')}}"></script>
+        <script type="text/javascript" src="{{relative_path('scripts.js')}}"></script>
     </body>
 </html>
