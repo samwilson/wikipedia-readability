@@ -10,14 +10,14 @@
     <body>
         <div class="container">
             <div class="page-header">
-                <h1><a href="{{url('home')}}">{{title}}</a></h1>
+                <h1><a href="{{relative_path('/')}}">{{title}}</a></h1>
             </div>
             <p>
                 This tool displays up to fifty articles in a given category on English Wikipedia,
                 ranked by their <a href="https://en.wikipedia.org/wiki/Flesch%E2%80%93Kincaid_readability_tests">Flesch reading ease</a> scores.
             </p>
 
-            <form action="{{url('home')}}" method="get" class="well">
+            <form action="{{relative_path('/')}}" method="get" class="well">
                 <div class="form-group">
                     <label for="cat" class="form-label">Category name:</label>
                     <input type="text" name="cat" class="form-control" {% if cat %}value="{{cat}}"{% endif %} />
@@ -120,11 +120,11 @@
             <p class="text-muted">Please report any bugs or feature requests via <a href="https://github.com/samwilson/wikipedia-readability/issues">GitHub</a>.</p>
         </div>
         <script type="text/javascript">
-            var searchUrl = "{{url('search')}}";
+            var searchUrl = "{{relative_path('search')}}";
         </script>
         <script type="text/javascript" src="//tools-static.wmflabs.org/cdnjs/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
         <script type="text/javascript" src="//tools-static.wmflabs.org/cdnjs/ajax/libs/twitter-bootstrap/3.3.6/js/bootstrap.min.js"></script>
         <script type="text/javascript" src="//tools-static.wmflabs.org/cdnjs/ajax/libs/jquery-autocomplete/1.0.7/jquery.auto-complete.min.js"></script>
-        <script type="text/javascript" src="{{url('home')}}/scripts.js"></script>
+        <script type="text/javascript" src="{{relative_path('/scripts.js')}}"></script>
     </body>
 </html>
